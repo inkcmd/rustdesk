@@ -609,19 +609,18 @@ jobs:
       fail-fast: false
       matrix:
         job:
-       - {    arch: x86_64,
+          - {
+              arch: x86_64,
               target: x86_64-apple-darwin,
               os: macos-13,
               extra-build-args: "",
-        }
-              
-            
-          - { arch: aarch64,
+            }
+          - {
+              arch: aarch64,
               target: aarch64-apple-darwin,
               os: macos-latest,
-              # extra-build-args: "--disable-flutter-texture-render", # disable this for mac, because we see a lot of users reporting flickering both on arm and x64, and we can not confirm if texture rendering has better performance if htere is no vram, https://github.com/rustdesk/rustdesk/issues/6296
               extra-build-args: "",
-              }
+            }
               
             
     steps:
