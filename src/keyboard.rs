@@ -665,9 +665,10 @@ pub fn legacy_keyboard_mode(event: &Event, mut key_event: KeyEvent) -> Vec<KeyEv
 
     let peer = get_peer_platform();
     let is_win = peer == "Windows";
-    if is_win {
+    if is_win && !get_key_state(enigo::Key::NumLock) {
         key = convert_numpad_keys(key);
     }
+
 
     let alt = get_key_state(enigo::Key::Alt);
     #[cfg(windows)]
