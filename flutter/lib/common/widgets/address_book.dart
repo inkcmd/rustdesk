@@ -286,7 +286,7 @@ class _AddressBookState extends State<AddressBook> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-          ),
+          ).workaroundFreezeLinuxMint(),
         ),
         searchMatchFn: (item, searchValue) {
           return item.value
@@ -509,13 +509,13 @@ class _AddressBookState extends State<AddressBook> {
 
       double marginBottom = 4;
 
-      row({required Widget lable, required Widget input}) {
+      row({required Widget label, required Widget input}) {
         makeChild(bool isPortrait) => Row(
               children: [
                 !isPortrait
                     ? ConstrainedBox(
                         constraints: const BoxConstraints(minWidth: 100),
-                        child: lable.marginOnly(right: 10))
+                        child: label.marginOnly(right: 10))
                     : SizedBox.shrink(),
                 Expanded(
                   child: ConstrainedBox(
@@ -535,7 +535,7 @@ class _AddressBookState extends State<AddressBook> {
             Column(
               children: [
                 row(
-                    lable: Row(
+                    label: Row(
                       children: [
                         Text(
                           '*',
@@ -556,9 +556,9 @@ class _AddressBookState extends State<AddressBook> {
                                   : translate('ID'),
                               errorText: errorMsg,
                               errorMaxLines: 5),
-                        ))),
+                        ).workaroundFreezeLinuxMint())),
                 row(
-                  lable: Text(
+                  label: Text(
                     translate('Alias'),
                     style: style,
                   ),
@@ -569,11 +569,11 @@ class _AddressBookState extends State<AddressBook> {
                               ? null
                               : translate('Alias'),
                         ),
-                      )),
+                      ).workaroundFreezeLinuxMint()),
                 ),
                 if (isCurrentAbShared)
                   row(
-                      lable: Text(
+                      label: Text(
                         translate('Password'),
                         style: style,
                       ),
@@ -598,7 +598,7 @@ class _AddressBookState extends State<AddressBook> {
                               },
                             ),
                           ),
-                        ),
+                        ).workaroundFreezeLinuxMint(),
                       )),
                 if (gFFI.abModel.currentAbTags.isNotEmpty)
                   Align(
@@ -704,7 +704,7 @@ class _AddressBookState extends State<AddressBook> {
                     ),
                     controller: controller,
                     autofocus: true,
-                  ),
+                  ).workaroundFreezeLinuxMint(),
                 ),
               ],
             ),

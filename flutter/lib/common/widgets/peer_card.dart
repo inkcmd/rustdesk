@@ -488,6 +488,7 @@ abstract class BasePeerCard extends StatelessWidget {
     BuildContext context,
     String title, {
     bool isFileTransfer = false,
+    bool isViewCamera = false,
     bool isTcpTunneling = false,
     bool isRDP = false,
   }) {
@@ -502,6 +503,7 @@ abstract class BasePeerCard extends StatelessWidget {
           peer,
           tab,
           isFileTransfer: isFileTransfer,
+          isViewCamera: isViewCamera,
           isTcpTunneling: isTcpTunneling,
           isRDP: isRDP,
         );
@@ -527,6 +529,15 @@ abstract class BasePeerCard extends StatelessWidget {
       context,
       translate('Transfer file'),
       isFileTransfer: true,
+    );
+  }
+
+  @protected
+  MenuEntryBase<String> _viewCameraAction(BuildContext context) {
+    return _connectCommonAction(
+      context,
+      translate('View camera'),
+      isViewCamera: true,
     );
   }
 
@@ -716,18 +727,18 @@ abstract class BasePeerCard extends StatelessWidget {
           switch (tab) {
             case PeerTabIndex.recent:
               await bind.mainRemovePeer(id: id);
-              await bind.mainLoadRecentPeers();
+              bind.mainLoadRecentPeers();
               break;
             case PeerTabIndex.fav:
               final favs = (await bind.mainGetFav()).toList();
               if (favs.remove(id)) {
                 await bind.mainStoreFav(favs: favs);
-                await bind.mainLoadFavPeers();
+                bind.mainLoadFavPeers();
               }
               break;
             case PeerTabIndex.lan:
               await bind.mainRemoveDiscovered(id: id);
-              await bind.mainLoadLanPeers();
+              bind.mainLoadLanPeers();
               break;
             case PeerTabIndex.ab:
               await gFFI.abModel.deletePeers([id]);
@@ -880,6 +891,7 @@ class RecentPeerCard extends BasePeerCard {
     final List<MenuEntryBase<String>> menuItems = [
       _connectAction(context),
       _transferFileAction(context),
+      _viewCameraAction(context),
     ];
 
     final List favs = (await bind.mainGetFav()).toList();
@@ -939,6 +951,7 @@ class FavoritePeerCard extends BasePeerCard {
     final List<MenuEntryBase<String>> menuItems = [
       _connectAction(context),
       _transferFileAction(context),
+      _viewCameraAction(context),
     ];
     if (isDesktop && peer.platform != kPeerPlatformAndroid) {
       menuItems.add(_tcpTunnelingAction(context));
@@ -992,6 +1005,7 @@ class DiscoveredPeerCard extends BasePeerCard {
     final List<MenuEntryBase<String>> menuItems = [
       _connectAction(context),
       _transferFileAction(context),
+      _viewCameraAction(context),
     ];
 
     final List favs = (await bind.mainGetFav()).toList();
@@ -1045,6 +1059,7 @@ class AddressBookPeerCard extends BasePeerCard {
     final List<MenuEntryBase<String>> menuItems = [
       _connectAction(context),
       _transferFileAction(context),
+      _viewCameraAction(context),
     ];
     if (isDesktop && peer.platform != kPeerPlatformAndroid) {
       menuItems.add(_tcpTunnelingAction(context));
@@ -1177,6 +1192,7 @@ class MyGroupPeerCard extends BasePeerCard {
     final List<MenuEntryBase<String>> menuItems = [
       _connectAction(context),
       _transferFileAction(context),
+      _viewCameraAction(context),
     ];
     if (isDesktop && peer.platform != kPeerPlatformAndroid) {
       menuItems.add(_tcpTunnelingAction(context));
@@ -1257,7 +1273,7 @@ void _rdpDialog(String id) async {
                         hintText: '3389'),
                     controller: portController,
                     autofocus: true,
-                  ),
+                  ).workaroundFreezeLinuxMint(),
                 ),
               ],
             ).marginOnly(bottom: isDesktop ? 8 : 0),
@@ -1277,7 +1293,7 @@ void _rdpDialog(String id) async {
                             labelText:
                                 isDesktop ? null : translate('Username')),
                         controller: userController,
-                      ),
+                      ).workaroundFreezeLinuxMint(),
                     ),
                   ],
                 ).marginOnly(bottom: stateGlobal.isPortrait.isFalse ? 8 : 0)),
@@ -1305,7 +1321,7 @@ void _rdpDialog(String id) async {
                                         ? Icons.visibility_off
                                         : Icons.visibility))),
                             controller: passwordController,
-                          )),
+                          ).workaroundFreezeLinuxMint()),
                     ),
                   ],
                 ))
@@ -1398,6 +1414,7 @@ class TagPainter extends CustomPainter {
 
 void connectInPeerTab(BuildContext context, Peer peer, PeerTabIndex tab,
     {bool isFileTransfer = false,
+    bool isViewCamera = false,
     bool isTcpTunneling = false,
     bool isRDP = false}) async {
   var password = '';
@@ -1423,6 +1440,7 @@ void connectInPeerTab(BuildContext context, Peer peer, PeerTabIndex tab,
       password: password,
       isSharedPassword: isSharedPassword,
       isFileTransfer: isFileTransfer,
+      isViewCamera: isViewCamera,
       isTcpTunneling: isTcpTunneling,
       isRDP: isRDP);
 }

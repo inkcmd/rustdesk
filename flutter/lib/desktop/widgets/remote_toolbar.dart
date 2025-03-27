@@ -478,7 +478,10 @@ class _RemoteToolbarState extends State<RemoteToolbar> {
       state: widget.state,
       setFullscreen: _setFullscreen,
     ));
-    toolbarItems.add(_KeyboardMenu(id: widget.id, ffi: widget.ffi));
+    // Do not show keyboard for camera connection type.
+    if (widget.ffi.connType == ConnType.defaultConn) {
+      toolbarItems.add(_KeyboardMenu(id: widget.id, ffi: widget.ffi));
+    }
     toolbarItems.add(_ChatMenu(id: widget.id, ffi: widget.ffi));
     if (!isWeb) {
       toolbarItems.add(_VoiceCallMenu(id: widget.id, ffi: widget.ffi));
@@ -1043,23 +1046,26 @@ class _DisplayMenuState extends State<_DisplayMenu> {
         scrollStyle(),
         imageQuality(),
         codec(),
-        _ResolutionsMenu(
-          id: widget.id,
-          ffi: widget.ffi,
-          screenAdjustor: _screenAdjustor,
-        ),
-        if (showVirtualDisplayMenu(ffi))
+        if (ffi.connType == ConnType.defaultConn)
+          _ResolutionsMenu(
+            id: widget.id,
+            ffi: widget.ffi,
+            screenAdjustor: _screenAdjustor,
+          ),
+        if (showVirtualDisplayMenu(ffi) && ffi.connType == ConnType.defaultConn)
           _SubmenuButton(
             ffi: widget.ffi,
             menuChildren: getVirtualDisplayMenuChildren(ffi, id, null),
             child: Text(translate("Virtual display")),
           ),
-        cursorToggles(),
+        if (ffi.connType == ConnType.defaultConn) cursorToggles(),
         Divider(),
         toggles(),
       ];
       // privacy mode
-      if (ffiModel.keyboard && pi.features.privacyMode) {
+      if (ffi.connType == ConnType.defaultConn &&
+          ffiModel.keyboard &&
+          pi.features.privacyMode) {
         final privacyModeState = PrivacyModeState.find(id);
         final privacyModeList =
             toolbarPrivacyMode(privacyModeState, context, id, ffi);
@@ -1085,7 +1091,9 @@ class _DisplayMenuState extends State<_DisplayMenu> {
           ]);
         }
       }
-      menuChildren.add(widget.pluginItem);
+      if (ffi.connType == ConnType.defaultConn) {
+        menuChildren.add(widget.pluginItem);
+      }
       return menuChildren;
     }
 
@@ -1495,7 +1503,7 @@ class _ResolutionsMenuState extends State<_ResolutionsMenu> {
     );
   }
 
-  TextField _resolutionInput(TextEditingController controller) {
+  Widget _resolutionInput(TextEditingController controller) {
     return TextField(
       decoration: InputDecoration(
         border: InputBorder.none,
@@ -1509,7 +1517,7 @@ class _ResolutionsMenuState extends State<_ResolutionsMenu> {
         FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
       ],
       controller: controller,
-    );
+    ).workaroundFreezeLinuxMint();
   }
 
   List<Widget> _supportedResolutionMenuButtons() => resolutions
