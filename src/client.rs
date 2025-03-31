@@ -275,12 +275,12 @@ impl Client {
         let my_addr = socket.local_addr();
         let mut signed_id_pk = Vec::new();
         let mut relay_server = "".to_owned();
-
+/*
         if !key.is_empty() && !token.is_empty() {
             // mainly for the security of token
             allow_err!(secure_tcp(&mut socket, key).await);
         }
-
+*/
         let start = std::time::Instant::now();
         let mut peer_addr = Config::get_any_listen_addr(true);
         let mut peer_nat_type = NatType::UNKNOWN_NAT;
@@ -591,12 +591,12 @@ impl Client {
             let mut socket = connect_tcp(rendezvous_server, CONNECT_TIMEOUT)
                 .await
                 .with_context(|| "Failed to connect to rendezvous server")?;
-
+/*
             if !key.is_empty() && !token.is_empty() {
                 // mainly for the security of token
                 allow_err!(secure_tcp(&mut socket, key).await);
             }
-
+*/
             ipv4 = socket.local_addr().is_ipv4();
             let mut msg_out = RendezvousMessage::new();
             uuid = Uuid::new_v4().to_string();
